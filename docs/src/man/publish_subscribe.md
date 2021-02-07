@@ -7,14 +7,14 @@ Pub/Sub communication is asynchronous. If a “publish” service is started bef
 ## Multiple Subscribers
 There are two commons scenarios for a Publish/Subscribe pattern.  The first scenario has multiple subscribers listening to a publisher.  The publisher does not know about the subscribers and messages are published with or without any sunscribers listening.  
 
-![scenario 1](./assets/pub_sub_scenario_1.png)
+![multiple subscribers image](./assets/multiple_subscribers.png)
 
+Publishers are created with `Socket(PUB)` socket type. 
 ### zmq_pub.jl
 ```julia
 using ZMQ
 
-port = "5554"
-tcp = "tcp://*:$port"
+tcp = "tcp://*:5554"
 ctx = Context()
 pub = Socket(ctx, PUB)
 bind(pub, tcp)
@@ -29,12 +29,12 @@ end
 close(pub)
 ```
 
+Subscribers are created with `Socket(SUB)` socket type. 
 ### zmq_sub.jl
 ```julia
 using ZMQ
 
-port = "5554"
-tcp = "tcp://localhost:$port"
+tcp = "tcp://localhost:5554"
 ctx = Context()
 sub = Socket(ctx, SUB)
 connect(sub, tcp)
@@ -46,12 +46,14 @@ while true
 end
 close(sub)
 ```
+A publisher publishes `"aaa"` with two subscribers connected. 
 
-![pub-sub example](./assets/pub_sub_scenario_1.gif)
+![multiple subscribers gif](./assets/multiple_subscribers.gif)
 
 ## Multiple Publishers
-The second scenario has a sunscriber subscribed to multiple publishers.  The messages from both publishers arrive at the subscriber interleaved.  
+The second scenario has a subscriber connected to multiple publishers.  The messages from both publishers arrive at the subscriber interleaved.  
 
+![multiple publishers image](./assets/multiple_publishers.png)
 ### publisher_1.jl
 ```julia
 using ZMQ
@@ -109,5 +111,12 @@ end
 close(sub)
 ```
 
-![scenario 2](./assets/pub_sub_scenario_2.gif)
+Publisher 1 publishes `"aaa"` while publisher 2 publishes `"bbb"`.  The subscriber is connected to both publishers and the messages arrived interleaved.  
 
+![multiple publishers gif](./assets/multiple_publishers.gif)
+
+## Notes
+
+- If a publisher has no connected subscribers, then it will simply drop all messages.
+- If using a TCP socket, and a subscriber is slow, messages will queue up on the publisher.
+- Filtering happens at the subscriber side, not the publisher side.
