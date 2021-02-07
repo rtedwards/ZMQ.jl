@@ -9,8 +9,8 @@ There are two commons scenarios for a Publish/Subscribe pattern.  The first scen
 
 ![scenario 1](./assets/pub_sub_scenario_1.png)
 
+### zmq_pub.jl
 ```julia
-# zmq_pub.jl
 using ZMQ
 
 port = "5554"
@@ -29,8 +29,8 @@ end
 close(pub)
 ```
 
+### zmq_sub.jl
 ```julia
-# zmq_sub.jl
 using ZMQ
 
 port = "5554"
@@ -52,8 +52,8 @@ close(sub)
 ## Multiple Publishers
 The second scenario has a sunscriber subscribed to multiple publishers.  The messages from both publishers arrive at the subscriber interleaved.  
 
+### publisher_1.jl
 ```julia
-# publisher_1.jl
 using ZMQ
 
 tcp = "tcp://*:5554"
@@ -71,8 +71,8 @@ end
 close(pub)
 ```
 
+### publisher_2.jl
 ```julia
-# publisher_2.jl
 using ZMQ
 
 tcp = "tcp://*:5553"
@@ -90,8 +90,8 @@ end
 close(pub)
 ```
 
+### subscriber.jl
 ```julia
-# subscriber.jl
 using ZMQ
 
 tcp1 = "tcp://localhost:5554"
